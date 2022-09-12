@@ -15,42 +15,31 @@ class Communication:
         self.locations = n_locations
         self.octant_vocab = torch.rand(constants.QUADRANT_SIZE)
         self.segment_vocab = torch.rand(constants.SEGMENT_SIZE)
-        self.qs_pair =[]
+        self.qs_pairs =[]
         self.qs_map = {}
-
+        self.qs_vocab = {}
         for location in (self.locations):
             octant, segment = World.quadrant_circle_pair(location)
-            self.qs_pair.append([octant,segment])
+            self.qs_pairs.append([octant,segment])
             self.qs_map[location] = [octant, segment]
 
+        for qs_pair in self.qs_pairs:
+            q_word = self.octant_vocab[qs_pair[0]]
+            s_word = self.segment_vocab[qs_pair[1]]
+
+            self.qs_vocab[qs_pair] = [q_word, s_word]
 
 
+    def find_vocab(self, qs_pair):
+        try:
+            vocab = self.qs_vocab(qs_pair)
+            return vocab
+        except:
+            return -1
 
-
-    def generate_vocab(size):
-        return torch.rand(size)
-
-    def QSPair(location):
-        octant, segment = World.quadrant_circle_pair(location)
-        return [octant, segment]
-
-    def mappings(self, n_locations):
-        '''
-        Takes the concepts vector and 
-        return a mapping for the corresponding vocabulary mapping and vice
-        '''
-        # vocab for each segment and quadrant is generated
-        octants_vocab = self.generate_vocab(constants.QUADRANT_SIZE) 
-        segment_vocab = self.generate_vocab(constants.SEGMENT_SIZE)
-
-        # contains the Quadrant and segment of each location passed    
-        mappings = map(self.QSPair, n_locations) 
-        # We need Quadrant Segment pair for finding the vocabulary
-        # TODO: getting vocabulary for each Q-S pair given
-        v_quad = octants_vocab[]
-
-# %%
-s = 'Hello'
-print(s)
-print('hello again')
-# %%
+    def find_QSPair(self,location):
+        try:
+            qs_pair = self.qs_map[location]
+            return qs_pair
+        except:
+            return -1
