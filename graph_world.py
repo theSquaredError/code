@@ -18,6 +18,7 @@ class World:
         # creating the radiuses of the concentric circles
         self.radiuses = torch.linspace(0, constants.max_DIMENSIONALITY, steps=self.n_circles)
 
+    @staticmethod
     def quadrant_circle_pair(self, pairs, source):
         co1 = pairs[0] - source[0]
         co2 = pairs[1] - source[1]

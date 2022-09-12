@@ -49,7 +49,8 @@ class Agent(nn.Module):
             reward = -5
         if action == constants.ACTION_UTTER:
             # now we perform the utterance and listener has to interpr
-            # or a single neural network taking two inputs as one 
+            # or a single neural network taking two inputs as one
+            pass 
 
 
     def communicate(self, listener):
