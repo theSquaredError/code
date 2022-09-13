@@ -22,21 +22,30 @@ class World:
     def quadrant_circle_pair(self, pairs, source):
         co1 = pairs[0] - source[0]
         co2 = pairs[1] - source[1]
-
-        perpendicular = pairs[1] - source[1]
-        base = pairs[0]-source[1]
-
-        quad = 0
-        segment = 1
-        if co1>0 and co2 > 0:
-            quad = 1
-        elif co1<0 and co2>0:
-            quad = 2
-        elif co1<0 and co2<0:
-            quad = 3
-        else:
-            quad=4
+        point1, point2 = source, pairs
+        length = torch.sqrt(torch.square(point1[0]-point2[0])+torch.square(point1[1]-point2[1]))
+        angle = torch.rad2deg(torch.acos((point2[0]-point1[0])/length))
+        if point1[1]>point2[1]:
+            angle = 360 - angle
         
+        #TODO:finding the octant
+        octant = 0
+        if angle>=0 and angle<=45:
+            octant = 1
+        elif angle>45 and angle<=90:
+            octant = 2
+        elif angle>90 and angle<=135:
+            octant = 3
+        elif angle>135 and angle<=180:
+            octant = 4
+        elif angle>180 and angle<=225:
+            octant = 5
+        elif angle>225 and angle<=270:
+            octant = 6
+        elif angle>270 and angle<=315:
+            octant = 7
+        elif angle>315:
+            octant = 8
         # finding the circle
         # c_x,c_y =source[0], source[1] #coordinates of the origin
         distance = torch.sqrt(torch.square(co1) + torch.square(co2))
@@ -46,7 +55,7 @@ class World:
                 segment = i+1
                 break
 
-        return quad,segment
+        return octant,segment
     
 
 
@@ -62,15 +71,3 @@ if __name__ == '__main__':
     # agent = Agent(input_size, action_space_size, world)
 
     # agent(world.locations[0], world.locations[3])
-
-
-
-import torch
-point1 = [0,0]
-point2 = [-1,0]
-perpendicular = point2[0] - point1[0]
-base = point2[1] - point1[1]
-t = torch.atan(torch.tensor(perpendicular/base))
-print(t)
-deg = torch.rad2deg(t)
-print(deg)
