@@ -22,6 +22,10 @@ class World:
     def quadrant_circle_pair(self, pairs, source):
         co1 = pairs[0] - source[0]
         co2 = pairs[1] - source[1]
+
+        perpendicular = pairs[1] - source[1]
+        base = pairs[0]-source[1]
+
         quad = 0
         segment = 1
         if co1>0 and co2 > 0:
@@ -58,3 +62,17 @@ if __name__ == '__main__':
     # agent = Agent(input_size, action_space_size, world)
 
     # agent(world.locations[0], world.locations[3])
+
+
+# %%
+import torch
+point1 = [0,0]
+point2 = [-1,0]
+perpendicular = point2[0] - point1[0]
+base = point2[1] - point1[1]
+t = torch.atan(torch.tensor(perpendicular/base))
+print(t)
+deg = torch.rad2deg(t)
+print(deg)
+
+# %%
