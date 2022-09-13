@@ -64,7 +64,7 @@ if __name__ == '__main__':
     # agent(world.locations[0], world.locations[3])
 
 
-# %%
+
 import torch
 point1 = [0,0]
 point2 = [-1,0]
@@ -74,5 +74,3 @@ t = torch.atan(torch.tensor(perpendicular/base))
 print(t)
 deg = torch.rad2deg(t)
 print(deg)
-
-# %%
