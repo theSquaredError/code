@@ -50,6 +50,7 @@ class Agent(nn.Module):
         if action == constants.ACTION_UTTER:
             # now we perform the utterance and listener has to interpr
             # or a single neural network taking two inputs as one 
+            pass
 
 
     def communicate(self, listener):
