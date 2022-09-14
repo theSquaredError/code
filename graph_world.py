@@ -7,6 +7,7 @@ from torch import Tensor
 import constants
 import graphvisualisation
 # from agent import Agent
+from communication import Vocabulary
 
 class World: 
     def __init__(self, n_concepts) -> None:
