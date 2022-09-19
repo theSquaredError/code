@@ -49,10 +49,10 @@ def print_loss(losses, learning_rate = 0.01):
     plt.title("Learning rate %f"%(learning_rate))
     plt.show()
 
-def train_agent(net, X,Y, learning_rate = 0.01):
-    loss_fn = nn.MSELoss()
+def train_agent(net, X,Y, learning_rate = 0.01, loss_fn = nn.MSELoss()):
     optimiser = torch.optim.SGD(net.parameters(), lr=learning_rate)
     losses = []
+    t = torch.FloatTensor(28).uniform_(-1, 1) #number of concepts = 28
     for epoch in range(10):
         pred_y = net(X)
         loss = loss_fn(pred_y, Y)
@@ -79,15 +79,19 @@ if __name__ == '__main__':
     # Creating one hot encoding of each of the vector
     X = torch.tensor(one_hot_encoded(X_), dtype=torch.float)
     Y = torch.tensor(one_hot_encoded(Y_), dtype=torch.float)
-    
+    t = torch.FloatTensor(28).uniform_(-1, 1)
+
+    for i in range(28):
+        X[i] = X[i] + t[i]
 
     # VocabNet tries to learn the mapping from concept to vocab
     # input size = output size = 8+20  = constants.n_octants+ constants.n_segments
     vocabNet = MapNet(28,28)
+    
     # print(vocabNet)
 
-    train_agent(vocabNet,X,Y)
-
+    train_agent(vocabNet,X,Y,loss_fn=nn.CrossEntropyLoss())
+    print(vocabNet(X[:3]))
 
     # train_agent(vocabNet,)
     # ConceptNet = MapNet()
