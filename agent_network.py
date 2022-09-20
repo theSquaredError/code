@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 from copy import deepcopy
+from scipy.stats import truncnorm
+
+import os
 '''
 Both of the agent will learn their own mapping because each agent 
 is a separate neural network
@@ -50,18 +53,30 @@ def print_loss(losses, learning_rate = 0.01):
     plt.show()
 
 def train_agent(net, X,Y, learning_rate = 0.01, loss_fn = nn.MSELoss()):
-    optimiser = torch.optim.SGD(net.parameters(), lr=learning_rate)
+    optimiser = torch.optim.Adam(net.parameters(), lr=learning_rate)
     losses = []
-    t = torch.FloatTensor(28).uniform_(-1, 1) #number of concepts = 28
-    for epoch in range(10):
-        pred_y = net(X)
-        loss = loss_fn(pred_y, Y)
+    input_count=[]
+    for epoch in range(10000):
+        # t = torch.FloatTensor(1).uniform_(-1, 1) #number of concepts = 28
+        t2 = truncnorm.rvs(-10, 10, size=1) 
+        index = np.random.choice(28)
+        # input_count.append(index)
+        X_ = X[index] +\
+        torch.tensor(t2, dtype=torch.float)
+        Y_ = Y[index]
+        # print(f"X_ = {X_}")
+        # print(f"Y_ = {Y_}")
+        pred_y = net(X_)
+        # print(f"pred = {pred_y}")
+        # print(f"pred sum = {pred_y.sum()}")
+        loss = loss_fn(pred_y, Y_)
         losses.append(loss.item())
         
         net.zero_grad()
         loss.backward()
         optimiser.step()
-    print_loss(losses)
+    # print_loss(losses)
+    # print()
 
 def one_hot_encoded(data):
     dim = len(data)
@@ -79,10 +94,8 @@ if __name__ == '__main__':
     # Creating one hot encoding of each of the vector
     X = torch.tensor(one_hot_encoded(X_), dtype=torch.float)
     Y = torch.tensor(one_hot_encoded(Y_), dtype=torch.float)
-    t = torch.FloatTensor(28).uniform_(-1, 1)
+    # t = torch.FloatTensor(28).uniform_(-1, 1)
 
-    for i in range(28):
-        X[i] = X[i] + t[i]
 
     # VocabNet tries to learn the mapping from concept to vocab
     # input size = output size = 8+20  = constants.n_octants+ constants.n_segments
@@ -90,8 +103,22 @@ if __name__ == '__main__':
     
     # print(vocabNet)
 
-    train_agent(vocabNet,X,Y,loss_fn=nn.CrossEntropyLoss())
-    print(vocabNet(X[:3]))
+    train_agent(vocabNet,X,Y)
+    # print(X[2])
+
+    for i in range(11):
+        pred = vocabNet(X[i])
+        print(torch.sum(pred))
+        print(pred)
+        print(torch.argmax(pred))
+        print(torch.argmax(Y[i]))
+        print("*"*50)
+        # os.system('clear')
+    # print(torch.sum(pred, 1))
+# 
+    # print(torch.argmax(Y,1))
+    # print(torch.argmax(pred, 1))
+    # print(vocabNet(X[:3]))
 
     # train_agent(vocabNet,)
     # ConceptNet = MapNet()
