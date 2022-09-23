@@ -6,8 +6,6 @@ import torch
 from torch import Tensor
 import constants
 import graphvisualisation
-# from agent import Agent
-from communication import Vocabulary
 
 class World: 
     def __init__(self, n_concepts) -> None:
@@ -20,7 +18,7 @@ class World:
         self.radiuses = torch.linspace(0, constants.max_DIMENSIONALITY, steps=self.n_circles)
 
     @staticmethod
-    def quadrant_circle_pair(self, pairs, source):
+    def quadrant_circle_pair(pairs, source):
         co1 = pairs[0] - source[0]
         co2 = pairs[1] - source[1]
         point1, point2 = source, pairs
@@ -29,8 +27,9 @@ class World:
         if point1[1]>point2[1]:
             angle = 360 - angle
         
-        #TODO:finding the octant
-        octant = 0
+    
+        octant = 1
+        segment = 1
         if angle>=0 and angle<=45:
             octant = 1
         elif angle>45 and angle<=90:
@@ -50,16 +49,18 @@ class World:
         # finding the circle
         # c_x,c_y =source[0], source[1] #coordinates of the origin
         distance = torch.sqrt(torch.square(co1) + torch.square(co2))
+        radiuses = torch.linspace(
+            0, constants.max_DIMENSIONALITY, steps=constants.n_segments)
 
-        for i, s in enumerate(self.radiuses):
+        for i, s in enumerate(radiuses):
             if distance<=s.item():
                 segment = i+1
                 break
 
-        return octant,segment
+        return octant,segment+101
     
 
-
+'''
 if __name__ == '__main__':
     world = World(10)
     #  graphvisualisation.graphVisualisation(world.locations)
@@ -72,3 +73,5 @@ if __name__ == '__main__':
     # agent = Agent(input_size, action_space_size, world)
 
     # agent(world.locations[0], world.locations[3])
+
+'''

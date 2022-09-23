@@ -1,17 +1,23 @@
 from asyncio import constants
 import torch
 import torch.nn as nn
-import numpy as np
 import torch.nn.functional as F
-from communication import Communication
-import constants
+
+# from sklearn.preprocessing import LabelEncoder
+# from sklearn.preprocessing import OneHotEncoder
+
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import OneHotEncoder
+import numpy as np
 from copy import deepcopy
 from scipy.stats import truncnorm
-
 import os
+
+
+from communication import Communication
+import constants
+
+
+
 '''
 Both of the agent will learn their own mapping because each agent 
 is a separate neural network
@@ -45,18 +51,17 @@ class MapNet(nn.Module):
 
 
 def print_loss(losses, learning_rate = 0.01):
-    import matplotlib.pyplot as plt
     plt.plot(losses)
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.title("Learning rate %f"%(learning_rate))
     plt.show()
 
-def train_agent(net, X,Y, learning_rate = 0.01, loss_fn = nn.MSELoss()):
+def train_agent(net, X,Y, learning_rate = 0.01, loss_fn = nn.MSELoss(), epochs = 1000):
     optimiser = torch.optim.Adam(net.parameters(), lr=learning_rate)
     losses = []
     input_count=[]
-    for epoch in range(10000):
+    for epoch in range(epochs):
         # t = torch.FloatTensor(1).uniform_(-1, 1) #number of concepts = 28
         t2 = truncnorm.rvs(-10, 10, size=1) 
         index = np.random.choice(28)
@@ -82,12 +87,15 @@ def one_hot_encoded(data):
     dim = len(data)
     temp = np.eye(dim)
     return temp
-    
 
-if __name__ == '__main__':
+
+
+# if __name__ == '__main__':
+def initialise():
     # Getting the mappings
     vocab_map = Communication.generate_vocabulary(constants.n_octants,constants.n_segments)
     # vocab_map = np.array(vocab_map)
+    
     X_ = [i[0] for i in vocab_map]
     Y_ = [i[1] for i in vocab_map]
     
@@ -103,9 +111,9 @@ if __name__ == '__main__':
     
     # print(vocabNet)
 
-    train_agent(vocabNet,X,Y)
+    train_agent(vocabNet,X,Y, epochs=10000)
     # print(X[2])
-
+    '''
     for i in range(11):
         pred = vocabNet(X[i])
         print(torch.sum(pred))
@@ -115,10 +123,17 @@ if __name__ == '__main__':
         print("*"*50)
         # os.system('clear')
     # print(torch.sum(pred, 1))
-# 
+ 
     # print(torch.argmax(Y,1))
     # print(torch.argmax(pred, 1))
     # print(vocabNet(X[:3]))
 
     # train_agent(vocabNet,)
-    # ConceptNet = MapNet()
+    '''
+
+    # Vocab to concepts 
+    # this will be used by listener agent
+    conceptNet = MapNet(28, 28)
+    train_agent(conceptNet, X,Y, epochs=10000)
+
+    return X_, Y_, conceptNet, vocabNet
